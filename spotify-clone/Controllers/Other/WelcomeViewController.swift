@@ -33,14 +33,21 @@ class WelcomeViewController: UIViewController {
     @objc func signInButtonTapped() {
         let vc = AuthViewController()
         vc.completionHandler = { success in
-            self.handleSignIn()
+            self.handleSignIn(success: success)
         }
         vc.navigationItem.largeTitleDisplayMode = .never
         navigationController!.pushViewController(vc, animated: true)
     }
     
-    func handleSignIn() {
-        
+    func handleSignIn(success: Bool) {
+        if !success {
+            let alertController = UIAlertController(title: "Error", message: "Failed to sign in.\nTry again", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Ok", style: .cancel))
+            present(alertController, animated: true)
+            return
+        }
+        let sceneDelegate = UIApplication.shared.connectedScenes.first!.delegate as! SceneDelegate
+        sceneDelegate.setRootViewControllerBySignInStatus()
     }
     
     

@@ -11,12 +11,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        
+        setRootViewControllerBySignInStatus()
+        window?.makeKeyAndVisible()
+    }
+    
+    func setRootViewControllerBySignInStatus() {
         if AuthManager.shared.isSignedIn {
             window?.rootViewController = TabBarViewController()
         } else {
@@ -24,8 +27,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             navigationController.navigationBar.prefersLargeTitles = true
             window?.rootViewController = navigationController
         }
-        
-        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
