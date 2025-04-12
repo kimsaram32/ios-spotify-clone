@@ -21,27 +21,34 @@ class AuthViewController: UIViewController, WKNavigationDelegate {
         
         webView.navigationDelegate = self
         view.addSubview(webView)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.fill(to: view)
         
-        webView.load(URLRequest(url: AuthManager.shared.signInURL))
-    }
-    
-    override func viewDidLayoutSubviews() {
-        webView.frame = view.bounds
+        webView.load(URLRequest(url: AuthApi.shared.signInURL))
     }
     
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         guard let url = webView.url else { return }
-        guard let code = URLComponents(string: url.absoluteString)?.queryItems?.first(where: { $0.name == "code" })?.value else {
+        guard url.absoluteString.hasPrefix(AuthApi.Constants.redirectUri) else {
             return
         }
-        webView.isHidden = true
         
-        AuthManager.shared.exchangeCodeForToken(code: code, completion: { [weak self] success in
-            DispatchQueue.main.async {
-                self?.navigationController?.popToRootViewController(animated: true)
-                self?.completionHandler?(success)
+        webView.isHidden = true
+        guard let code = URLComponents(string: url.absoluteString)?.queryItems?.first(where: { $0.name == "code" })?.value else {
+            navigationController?.popToRootViewController(animated: true)
+            completionHandler?(false)
+            return
+        }
+        
+        Task {
+            do {
+                try await AuthApi.shared.exchangeCodeForToken(code: code)
+                navigationController?.popToRootViewController(animated: true)
+                completionHandler?(true)
+            } catch {
+                completionHandler?(false)
             }
-        })
+        }
     }
     
 

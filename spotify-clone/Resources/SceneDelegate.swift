@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func setRootViewControllerBySignInStatus() {
-        if AuthManager.shared.isSignedIn {
+        if AuthData.shared.isSignedIn {
             window?.rootViewController = TabBarViewController()
         } else {
             let navigationController = UINavigationController(rootViewController: WelcomeViewController())

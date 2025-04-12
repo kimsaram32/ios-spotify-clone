@@ -11,7 +11,9 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        AuthManager.shared.refreshAccessTokenIfNeeded()
+        Task {
+            try? await AuthApi.shared.refreshAccessTokenIfNeeded()
+        }
         return true
     }
 
