@@ -15,8 +15,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        setRootViewControllerBySignInStatus()
+        
+        let storyboard = UIStoryboard(name: "LaunchScreen", bundle: nil)
+        window?.rootViewController = storyboard.instantiateInitialViewController()
         window?.makeKeyAndVisible()
+
+        Task {
+            let result = try? await AuthApi.shared.refreshAccessTokenIfNeeded()
+            setRootViewControllerBySignInStatus()
+        }
     }
     
     func setRootViewControllerBySignInStatus() {

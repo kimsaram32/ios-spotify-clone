@@ -7,6 +7,7 @@ class AuthViewController: UIViewController, WKNavigationDelegate {
         var preferences = WKWebpagePreferences()
         preferences.allowsContentJavaScript = true
         var configuration = WKWebViewConfiguration()
+        configuration.websiteDataStore = .nonPersistent()
         configuration.defaultWebpagePreferences = preferences
         return WKWebView(frame: .zero, configuration: configuration)
     }()
@@ -32,7 +33,6 @@ class AuthViewController: UIViewController, WKNavigationDelegate {
         guard url.absoluteString.hasPrefix(AuthApi.Constants.redirectUri) else {
             return
         }
-        
         webView.isHidden = true
         guard let code = URLComponents(string: url.absoluteString)?.queryItems?.first(where: { $0.name == "code" })?.value else {
             navigationController?.popToRootViewController(animated: true)

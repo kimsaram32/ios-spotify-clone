@@ -18,7 +18,12 @@ final class AuthApi {
     private init() {}
     
     private var isRefreshing = false
-    private var refreshCompletionHandlers = [(String) -> Void]()
+    
+    private let authorizationHeader: String = {
+        let basicToken = Constants.clientId + ":" + Constants.clientSecret
+        let encodedBasicToken = basicToken.data(using: .utf8)!.base64EncodedString()
+        return "Basic \(encodedBasicToken)"
+    }()
     
     let signInURL: URL = {
         var urlComponents = URLComponents(string: "https://accounts.spotify.com/authorize")!
@@ -41,17 +46,11 @@ final class AuthApi {
             URLQueryItem(name: "redirect_uri", value: Constants.redirectUri),
         ]
         
-        guard let url = requestUrlComponents.url else {
-            throw ApiError.requestFailed
-        }
-        let basicToken = Constants.clientId + ":" + Constants.clientSecret
-        guard let encodedBasicToken = basicToken.data(using: .utf8)?.base64EncodedString() else {
-            throw ApiError.requestFailed
-        }
+        let url = requestUrlComponents.url!
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("Basic \(encodedBasicToken)", forHTTPHeaderField: "Authorization")
+        request.setValue(authorizationHeader, forHTTPHeaderField: "Authorization")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
         do {
@@ -60,42 +59,60 @@ final class AuthApi {
             AuthData.shared.accessToken = response.access_token
             AuthData.shared.refreshToken = response.refresh_token
             AuthData.shared.tokenExpirationDate = Date(timeIntervalSinceNow: TimeInterval(response.expires_in))
+            print("exchange succeeded")
         } catch {
+            print("failed to exchange...", error)
             throw ApiError.requestFailed
         }
     }
     
-    func refreshAccessTokenIfNeeded() async throws {
+    private var refreshTask: Task<Void, any Error>?
+    
+    func refreshAccessTokenIfNeeded() async throws -> Result<Void, any Error> {
         guard AuthData.shared.shouldRefreshToken else {
-            return
+            print("no need to refresh")
+            return Result.success(())
         }
         
-        var requestUrlComponents = URLComponents(string: "https://accounts.spotify.com/api/token")!
-        requestUrlComponents.queryItems = [
-            URLQueryItem(name: "grant_type", value: "refresh_token"),
-            URLQueryItem(name: "refresh_token", value: AuthData.shared.refreshToken),
-            URLQueryItem(name: "client_id", value: Constants.clientId),
-        ]
-        
-        guard let url = requestUrlComponents.url else {
-            throw ApiError.requestFailed
+        if let refreshTask {
+            return await refreshTask.result
         }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            let httpResponse = response as! HTTPURLResponse
-            let authResponse = try JSONDecoder().decode(AuthResponse.self, from: data)
+        refreshTask = Task {
+            var requestUrlComponents = URLComponents(string: "https://accounts.spotify.com/api/token")!
+            requestUrlComponents.queryItems = [
+                URLQueryItem(name: "grant_type", value: "refresh_token"),
+                URLQueryItem(name: "refresh_token", value: AuthData.shared.refreshToken),
+                URLQueryItem(name: "client_id", value: Constants.clientId),
+            ]
             
-            AuthData.shared.accessToken = authResponse.access_token
-            AuthData.shared.refreshToken = authResponse.refresh_token
-            AuthData.shared.tokenExpirationDate = Date(timeIntervalSinceNow: TimeInterval(authResponse.expires_in))
-        } catch {
-            throw ApiError.requestFailed
+            guard let url = requestUrlComponents.url else {
+                throw ApiError.requestFailed
+            }
+            print("request url is ", url.absoluteString)
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue(authorizationHeader, forHTTPHeaderField: "Authorization")
+            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            
+            do {
+                let (data, _) = try await URLSession.shared.data(for: request)
+                print("data is", (try? JSONSerialization.jsonObject(with: data)) as Any)
+                let authResponse = try JSONDecoder().decode(AuthResponse.self, from: data)
+                
+                print("refresh succeeded")
+                AuthData.shared.accessToken = authResponse.access_token
+                AuthData.shared.tokenExpirationDate = Date(timeIntervalSinceNow: TimeInterval(authResponse.expires_in))
+            } catch { // refresh token is invalid
+                print("refreshing failed", error)
+                AuthData.shared.accessToken = nil
+                AuthData.shared.refreshToken = nil
+                AuthData.shared.tokenExpirationDate = nil
+            }
         }
+        
+        return await refreshTask!.result
     }
     
     

@@ -9,7 +9,7 @@ final class AuthData {
             UserDefaults.standard.string(forKey: "accessToken")
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "accessToken")
+            UserDefaults.standard.set(newValue as? NSString, forKey: "accessToken")
         }
     }
     
@@ -18,7 +18,7 @@ final class AuthData {
             UserDefaults.standard.string(forKey: "refreshToken")
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "refreshToken")
+            UserDefaults.standard.set(newValue as? NSString, forKey: "refreshToken")
         }
     }
     
@@ -27,7 +27,7 @@ final class AuthData {
             UserDefaults.standard.object(forKey: "expirationDate") as? Date
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "expirationDate")
+            UserDefaults.standard.set(newValue as? NSDate, forKey: "expirationDate")
         }
     }
     
@@ -38,6 +38,12 @@ final class AuthData {
     
     var isSignedIn: Bool {
         accessToken != nil && !shouldRefreshToken
+    }
+    
+    func clearData() {
+        accessToken = nil
+        refreshToken = nil
+        tokenExpirationDate = nil
     }
     
     

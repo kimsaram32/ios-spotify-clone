@@ -34,7 +34,9 @@ class SettingsViewController: UIViewController {
             ]),
             TableViewSection(title: "Auth", rows: [
                 TableViewRow(title: "Log out") {
-                    
+                    AuthData.shared.clearData()
+                    let sceneDelegate = UIApplication.shared.connectedScenes.first!.delegate as! SceneDelegate
+                    sceneDelegate.setRootViewControllerBySignInStatus()
                 }
             ])
         ]

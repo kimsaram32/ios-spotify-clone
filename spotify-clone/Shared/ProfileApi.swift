@@ -8,7 +8,7 @@ final class ProfileApi {
     
     private func fetchValidAccessToken() async -> String? {
         if AuthData.shared.shouldRefreshToken {
-            try? await AuthApi.shared.refreshAccessTokenIfNeeded()
+            let result = try? await AuthApi.shared.refreshAccessTokenIfNeeded()
         }
         return AuthData.shared.accessToken
     }

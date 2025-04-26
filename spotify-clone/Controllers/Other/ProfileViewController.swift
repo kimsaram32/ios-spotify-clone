@@ -42,7 +42,7 @@ class ProfileViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.fill(to: view.safeAreaLayoutGuide)
+        tableView.fill(to: view)
         tableView.isHidden = true
 
         Task {
