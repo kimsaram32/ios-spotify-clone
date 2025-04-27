@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
 
         Task {
-            let result = try? await AuthApi.shared.refreshAccessTokenIfNeeded()
+            let _ = try? await AuthApi.shared.refreshAccessTokenIfNeeded()
             setRootViewControllerBySignInStatus()
         }
     }

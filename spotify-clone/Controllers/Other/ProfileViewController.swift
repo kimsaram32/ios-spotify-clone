@@ -1,11 +1,5 @@
-//
-//  ProfileViewController.swift
-//  spotify-clone
-//
-//  Created by 김민정 on 4/10/25.
-//
-
 import UIKit
+import SDWebImage
 
 class ProfileViewController: UIViewController {
     
@@ -21,7 +15,7 @@ class ProfileViewController: UIViewController {
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "header")
+        tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: ImageHeaderView.reuseIdentifier)
         tableView.sectionHeaderHeight = 100
         tableView.allowsSelection = false
         return tableView
@@ -60,27 +54,22 @@ class ProfileViewController: UIViewController {
             ]
             tableView.isHidden = false
             tableView.reloadData()
-            await fetchProfileImage()
+            if let imageURL = profile.images.first?.url {
+                SDWebImageManager.shared.loadImage(
+                    with: imageURL,
+                    options: .highPriority,
+                    progress: nil,
+                    completed: { (image, data, error, cacheType, finished, url) in
+                        if let image, error == nil {
+                            self.profileImage = image
+                            self.tableView.reloadData()
+                        }
+                    }
+                )
+            }
         } catch {
             showError()
         }
-    }
-    
-    func fetchProfileImage() async {
-        guard let profileUrlString = profile.images.first?.url else {
-            return
-        }
-        guard let profileUrl = URL(string: profileUrlString) else {
-            return
-        }
-        
-        let request = URLRequest(url: profileUrl)
-        guard let (profileData, _) = try? await URLSession.shared.data(for: request) else {
-            return
-        }
-        
-        profileImage = UIImage(data: profileData)
-        tableView.reloadData()
     }
     
     func showError() {
@@ -116,7 +105,7 @@ extension ProfileViewController: UITableViewDataSource {
 extension ProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "header") as! ImageHeaderView
+        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ImageHeaderView.reuseIdentifier) as! ImageHeaderView
         if let profileImage {
             headerView.configure(image: profileImage)
         }

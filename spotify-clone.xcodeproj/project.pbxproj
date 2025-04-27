@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		EE9FA0DF2DBE08E6000DF4D1 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = EE9FA0DE2DBE08E6000DF4D1 /* SDWebImage */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		EE32FD3E2DA73524003E6D9F /* spotify-clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "spotify-clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE9FA0DF2DBE08E6000DF4D1 /* SDWebImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = "spotify-clone";
 			packageProductDependencies = (
+				EE9FA0DE2DBE08E6000DF4D1 /* SDWebImage */,
 			);
 			productName = "spotify-clone";
 			productReference = EE32FD3E2DA73524003E6D9F /* spotify-clone.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = EE32FD352DA73524003E6D9F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EE9FA0DD2DBE08E6000DF4D1 /* XCRemoteSwiftPackageReference "SDWebImage" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EE32FD3F2DA73524003E6D9F /* Products */;
 			projectDirPath = "";
@@ -335,6 +344,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EE9FA0DD2DBE08E6000DF4D1 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.21.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EE9FA0DE2DBE08E6000DF4D1 /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE9FA0DD2DBE08E6000DF4D1 /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EE32FD362DA73524003E6D9F /* Project object */;
 }

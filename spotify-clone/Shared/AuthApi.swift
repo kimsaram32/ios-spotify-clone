@@ -11,7 +11,9 @@ final class AuthApi {
         static let scopes = [
             "user-read-private",
             "user-library-read",
-            "user-read-email"
+            "user-read-email",
+            "user-top-read",
+            "playlist-read-private",
         ].joined(separator: " ")
     }
     

@@ -1,15 +1,15 @@
 import Foundation
 
-final class ProfileApi: BaseApi {
+final class AlbumApi: BaseApi {
     
-    static let shared = ProfileApi()
+    static let shared = AlbumApi()
     
     private override init() {}
     
-    func getCurrentUserProfile() async throws -> UserProfile {
-        let url = URL(string: "https://api.spotify.com/v1/me")!
+    func getNewReleases() async throws -> [Album] {
+        let url = URL(string: "https://api.spotify.com/v1/browse/new-releases")!
         guard let request = await createAuthorizedURLRequest(url: url) else {
-            throw ApiError.requestFailed
+            throw ApiError.unAuthorized
         }
         
         do {
@@ -19,12 +19,12 @@ final class ProfileApi: BaseApi {
                 throw ApiError.requestFailed
             }
             
-            let profile = try JSONDecoder().decode(UserProfile.self, from: data)
-            return profile
+            let newReleasesResponse = try JSONDecoder().decode(NewReleasesResponse.self, from: data)
+            return newReleasesResponse.albums.items
         } catch {
             throw ApiError.requestFailed
         }
     }
-    
+
     
 }

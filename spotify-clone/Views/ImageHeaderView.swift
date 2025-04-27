@@ -2,6 +2,8 @@ import UIKit
 
 class ImageHeaderView: UITableViewHeaderFooterView {
     
+    static let reuseIdentifier = "ImageHeaderView"
+    
     private let imageView = UIImageView()
     
     override init(reuseIdentifier: String?) {
