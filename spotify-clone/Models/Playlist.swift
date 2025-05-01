@@ -12,6 +12,20 @@ struct PlaylistTracks: Codable {
     
 }
 
+struct PlaylistOwner: Codable {
+   
+    let id: String
+    let displayName: String
+    
+    enum CodingKeys: String, CodingKey {
+        
+        case id
+        case displayName = "display_name"
+        
+    }
+    
+}
+
 struct Playlist: Codable {
     
     let id: String
@@ -20,6 +34,7 @@ struct Playlist: Codable {
     let images: [APIImage]
     let name: String
     let isPublic: Bool
+    let owner: PlaylistOwner
     let tracks: PlaylistTracks
     
     enum CodingKeys: String, CodingKey {
@@ -30,6 +45,7 @@ struct Playlist: Codable {
         case images
         case name
         case isPublic = "public"
+        case owner
         case tracks
         
     }

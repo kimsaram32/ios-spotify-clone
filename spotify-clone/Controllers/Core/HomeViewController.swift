@@ -2,8 +2,6 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
-    static let defaultArtworkURL = URL(string: "https://placehold.co/300x300?text=Album")!
-    
     enum BrowseSectionType: Int {
         
         case newRelease
@@ -23,9 +21,12 @@ class HomeViewController: UIViewController {
         
     }
     
+    // this sucks (todo refactor with something else??)
+    var featuredPlaylists = [Playlist]()
+    
     var newReleaseViewModels = [NewReleaseCellViewModel]()
     var featuredPlaylistViewModels = [FeaturedPlaylistCellViewModel]()
-    var recommendationViewModels = [RecommendationCellViewModel]()
+    var recommendationViewModels = [TrackCellViewModel]()
     
     lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
@@ -39,7 +40,7 @@ class HomeViewController: UIViewController {
             FeaturedPlaylistCollectionViewCell.self, forCellWithReuseIdentifier: FeaturedPlaylistCollectionViewCell.reuseIdentifier
         )
         collectionView.register(
-            RecommendationCollectionViewCell.self, forCellWithReuseIdentifier: RecommendationCollectionViewCell.reuseIdentifier
+            TrackCollectionViewCell.self, forCellWithReuseIdentifier: TrackCollectionViewCell.reuseIdentifier
         )
         
         collectionView.isHidden = true
@@ -82,7 +83,7 @@ class HomeViewController: UIViewController {
     
     func setLayout() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.fill(to: view)
+        collectionView.fill(to: view.safeAreaLayoutGuide)
         
         loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
         loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -101,11 +102,11 @@ class HomeViewController: UIViewController {
         guard let albums = try? await AlbumApi.shared.getNewReleases() else {
             return
         }
-        newReleaseViewModels = albums.compactMap {
+        newReleaseViewModels = albums.map {
             NewReleaseCellViewModel(
                 name: $0.name,
-                artistName: formatArtistName(artists: $0.artists),
-                artworkURL: getArtworkURL(images: $0.images),
+                artistName: Formatter.shared.formatArtistName(artists: $0.artists),
+                artworkURL: Formatter.shared.getArtworkURL(images: $0.images),
                 tracksCount: $0.totalTracks
             )
         }
@@ -115,11 +116,12 @@ class HomeViewController: UIViewController {
         guard let playlists = try? await PlaylistApi.shared.getFeaturedPlaylists() else {
             return
         }
-        featuredPlaylistViewModels = playlists.compactMap {
+        featuredPlaylists = playlists
+        featuredPlaylistViewModels = playlists.map {
             FeaturedPlaylistCellViewModel(
                 name: $0.name,
                 tracksCount: $0.tracks.count,
-                artworkURL: getArtworkURL(images: $0.images)
+                artworkURL: Formatter.shared.getArtworkURL(images: $0.images)
             )
         }
     }
@@ -128,21 +130,13 @@ class HomeViewController: UIViewController {
         guard let tracks = try? await TrackApi.shared.getRecommendations() else {
             return
         }
-        recommendationViewModels = tracks.compactMap {
-            RecommendationCellViewModel(
+        recommendationViewModels = tracks.map {
+            TrackCellViewModel(
                 name: $0.name,
-                artistName: formatArtistName(artists: $0.artists),
-                artworkURL: getArtworkURL(images: $0.album.images)
+                artistName: Formatter.shared.formatArtistName(artists: $0.artists),
+                artworkURL: Formatter.shared.getArtworkURL(images: $0.album.images)
             )
         }
-    }
-    
-    func formatArtistName(artists: [Artist]) -> String {
-        artists.count > 0 ? artists.map { $0.name }.joined(separator: ",") : "-"
-    }
-    
-    func getArtworkURL(images: [APIImage]) -> URL {
-        images.first?.url ?? HomeViewController.defaultArtworkURL
     }
     
     @objc func settingsButtonTapped() {
@@ -152,7 +146,7 @@ class HomeViewController: UIViewController {
 
 }
 
-extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension HomeViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 3
@@ -189,10 +183,24 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             return cell
         case .recommendation:
             let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: RecommendationCollectionViewCell.reuseIdentifier, for: indexPath
-            ) as! RecommendationCollectionViewCell
+                withReuseIdentifier: TrackCollectionViewCell.reuseIdentifier, for: indexPath
+            ) as! TrackCollectionViewCell
             cell.configure(with: recommendationViewModels[indexPath.row])
             return cell
+        }
+    }
+    
+    
+}
+
+extension HomeViewController: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let sectionType = BrowseSectionType(rawValue: indexPath.section)!
+        
+        if sectionType == .featuredPlaylist {
+            let viewController = PlaylistViewController(playlist: featuredPlaylists[indexPath.row])
+            navigationController?.pushViewController(viewController, animated: true)
         }
     }
     

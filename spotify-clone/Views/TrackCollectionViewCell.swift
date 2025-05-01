@@ -1,9 +1,9 @@
 import UIKit
 import SDWebImage
 
-class RecommendationCollectionViewCell: UICollectionViewCell {
+class TrackCollectionViewCell: UICollectionViewCell {
     
-    static let reuseIdentifier = "RecommendationCollectionViewCell"
+    static let reuseIdentifier = "TrackCollectionViewCell"
     
     lazy var imageView: UIImageView = {
         let imageView = UIImageView()
@@ -45,26 +45,27 @@ class RecommendationCollectionViewCell: UICollectionViewCell {
     }
     
     func setLayout() {
-        let padding: CGFloat = 4
+        let imagePadding: CGFloat = 4
+        let contentPadding: CGFloat = 10
         
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.heightAnchor.constraint(equalTo: heightAnchor, constant: -padding * 2).isActive = true
+        imageView.heightAnchor.constraint(equalTo: heightAnchor, constant: -imagePadding * 2).isActive = true
         imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
         imageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        imageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding).isActive = true
+        imageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: imagePadding).isActive = true
         
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: padding).isActive = true
+        nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: contentPadding).isActive = true
         nameLabel.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 12).isActive = true
-        nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding).isActive = true
+        nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -imagePadding).isActive = true
 
         artistNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        artistNameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: padding).isActive = true
+        artistNameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: contentPadding).isActive = true
         artistNameLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor).isActive = true
-        artistNameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding).isActive = true
+        artistNameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -imagePadding).isActive = true
     }
     
-    func configure(with viewModel: RecommendationCellViewModel) {
+    func configure(with viewModel: TrackCellViewModel) {
         imageView.sd_setImage(with: viewModel.artworkURL)
         nameLabel.text = viewModel.name
         artistNameLabel.text = viewModel.artistName

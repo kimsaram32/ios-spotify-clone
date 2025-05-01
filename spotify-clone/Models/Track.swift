@@ -9,7 +9,7 @@ struct Track: Codable {
     let discNumber: Int
     let duration: Int
     let isExplicitLyrics: Bool
-    let isPlayable: Bool
+    let isPlayable: Bool?
     let restrictions: Restriction?
     let name: String
     let previewURL: URL?
