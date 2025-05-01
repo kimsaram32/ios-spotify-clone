@@ -1,21 +1,5 @@
 import Foundation
 
-enum AlbumType: String, Codable {
-    
-    case album = "album"
-    case single = "single"
-    case compilation = "compilation"
-    
-}
-
-enum AlbumReleaseDatePrecision: String, Codable {
-    
-    case year = "year"
-    case month = "month"
-    case day = "day"
-    
-}
-
 struct Album: Codable {
     
     let albumType: AlbumType

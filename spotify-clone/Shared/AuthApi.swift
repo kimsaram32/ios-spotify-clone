@@ -58,9 +58,9 @@ final class AuthApi {
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let response = try JSONDecoder().decode(AuthResponse.self, from: data)
-            AuthData.shared.accessToken = response.access_token
-            AuthData.shared.refreshToken = response.refresh_token
-            AuthData.shared.tokenExpirationDate = Date(timeIntervalSinceNow: TimeInterval(response.expires_in))
+            AuthData.shared.accessToken = response.accessToken
+            AuthData.shared.refreshToken = response.refreshToken
+            AuthData.shared.tokenExpirationDate = Date(timeIntervalSinceNow: TimeInterval(response.expiresIn))
             print("exchange succeeded")
         } catch {
             print("failed to exchange...", error)
@@ -104,8 +104,8 @@ final class AuthApi {
                 let authResponse = try JSONDecoder().decode(AuthResponse.self, from: data)
                 
                 print("refresh succeeded")
-                AuthData.shared.accessToken = authResponse.access_token
-                AuthData.shared.tokenExpirationDate = Date(timeIntervalSinceNow: TimeInterval(authResponse.expires_in))
+                AuthData.shared.accessToken = authResponse.accessToken
+                AuthData.shared.tokenExpirationDate = Date(timeIntervalSinceNow: TimeInterval(authResponse.expiresIn))
             } catch { // refresh token is invalid
                 print("refreshing failed", error)
                 AuthData.shared.accessToken = nil

@@ -18,5 +18,4 @@ struct UserProfile: Codable {
         case product
     }
     
-    
 }

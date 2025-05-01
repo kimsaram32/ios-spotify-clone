@@ -14,14 +14,3 @@ struct PlaylistDetailsTrack: Codable {
     
 }
 
-struct PlaylistDetailsTracks: Codable {
-    
-    let items: [PlaylistDetailsTrack]
-    
-}
-
-struct PlaylistDetailsResponse: Codable {
-    
-    let tracks: PlaylistDetailsTracks
-    
-}

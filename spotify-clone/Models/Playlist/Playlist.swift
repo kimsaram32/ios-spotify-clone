@@ -1,31 +1,5 @@
 import Foundation
 
-struct PlaylistTracks: Codable {
-    
-    let count: Int
-    
-    enum CodingKeys: String, CodingKey {
-        
-        case count = "total"
-        
-    }
-    
-}
-
-struct PlaylistOwner: Codable {
-   
-    let id: String
-    let displayName: String
-    
-    enum CodingKeys: String, CodingKey {
-        
-        case id
-        case displayName = "display_name"
-        
-    }
-    
-}
-
 struct Playlist: Codable {
     
     let id: String
