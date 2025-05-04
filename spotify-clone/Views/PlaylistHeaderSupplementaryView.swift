@@ -62,12 +62,12 @@ class PlaylistHeaderSupplementaryView: UICollectionReusableView {
         nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6).isActive = true
 
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        descriptionLabel.topAnchor.constraint(equalTo: nameLabel.topAnchor, constant: 20).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 16).isActive = true
         descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6).isActive = true
         descriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6).isActive = true
 
         ownerLabel.translatesAutoresizingMaskIntoConstraints = false
-        ownerLabel.topAnchor.constraint(equalTo: descriptionLabel.topAnchor, constant: 20).isActive = true
+        ownerLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 16).isActive = true
         ownerLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6).isActive = true
         ownerLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6).isActive = true
     }

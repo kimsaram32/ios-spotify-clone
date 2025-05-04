@@ -17,7 +17,7 @@ final class TrackApi: BaseApi {
             let data = try JSONDecoder().decode(TopItemsResponse.self, from: rawData)
             return data.items
         } catch {
-            print(error)
+            print("error: ", error)
             throw ApiError.requestFailed
         }
     }
