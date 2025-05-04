@@ -34,13 +34,21 @@ class HomeViewController: UIViewController {
         collectionView.delegate = self
         
         collectionView.register(
-            NewReleaseCollectionViewCell.self, forCellWithReuseIdentifier: NewReleaseCollectionViewCell.reuseIdentifier
+            TitleHeaderSupplementaryView.self,
+            forSupplementaryViewOfKind: "header",
+            withReuseIdentifier: TitleHeaderSupplementaryView.reuseIdentifier
         )
         collectionView.register(
-            FeaturedPlaylistCollectionViewCell.self, forCellWithReuseIdentifier: FeaturedPlaylistCollectionViewCell.reuseIdentifier
+            NewReleaseCollectionViewCell.self,
+            forCellWithReuseIdentifier: NewReleaseCollectionViewCell.reuseIdentifier
         )
         collectionView.register(
-            TrackCollectionViewCell.self, forCellWithReuseIdentifier: TrackCollectionViewCell.reuseIdentifier
+            FeaturedPlaylistCollectionViewCell.self,
+            forCellWithReuseIdentifier: FeaturedPlaylistCollectionViewCell.reuseIdentifier
+        )
+        collectionView.register(
+            TrackCollectionViewCell.self,
+            forCellWithReuseIdentifier: TrackCollectionViewCell.reuseIdentifier
         )
         
         collectionView.isHidden = true
@@ -190,6 +198,13 @@ extension HomeViewController: UICollectionViewDataSource {
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let titleHeaderView = collectionView.dequeueReusableSupplementaryView(ofKind: "header", withReuseIdentifier: TitleHeaderSupplementaryView.reuseIdentifier, for: indexPath) as! TitleHeaderSupplementaryView
+        let sectionType = BrowseSectionType(rawValue: indexPath.section)!
+        titleHeaderView.configure(with: sectionType.title)
+        return titleHeaderView
+    }
+    
     
 }
 
@@ -213,7 +228,8 @@ extension HomeViewController {
         let sectionContentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
         let layout = UICollectionViewCompositionalLayout(sectionProvider: { sectionIndex, _ in
             let sectionType = BrowseSectionType(rawValue: sectionIndex)!
-            
+            var section: NSCollectionLayoutSection
+                
             switch sectionType {
             case .newRelease:
                 let item = NSCollectionLayoutItem(
@@ -225,10 +241,8 @@ extension HomeViewController {
                     repeatingSubitem: item,
                     count: 3
                 )
-                let section = NSCollectionLayoutSection(group: verticalGroup)
-                section.contentInsets = sectionContentInsets
+                section = NSCollectionLayoutSection(group: verticalGroup)
                 section.orthogonalScrollingBehavior = .groupPagingCentered
-                return section
             case .featuredPlaylist:
                 let item = NSCollectionLayoutItem(
                     layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.5))
@@ -239,10 +253,8 @@ extension HomeViewController {
                     repeatingSubitem: item,
                     count: 2
                 )
-                let section = NSCollectionLayoutSection(group: verticalGroup)
-                section.contentInsets = sectionContentInsets
+                section = NSCollectionLayoutSection(group: verticalGroup)
                 section.orthogonalScrollingBehavior = .groupPaging
-                return section
             case .recommendation:
                 let item = NSCollectionLayoutItem(
                     layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
@@ -252,9 +264,23 @@ extension HomeViewController {
                     layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(100)),
                     subitems: [item]
                 )
-                let section = NSCollectionLayoutSection(group: verticalGroup)
-                return section
+                section = NSCollectionLayoutSection(group: verticalGroup)
             }
+                
+            section.contentInsets = sectionContentInsets
+            
+            let headerSupplementaryItem = NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1),
+                    heightDimension: .absolute(40)
+                ),
+                elementKind: "header",
+                alignment: .top
+            )
+            headerSupplementaryItem.contentInsets = .init(top: 0, leading: 8, bottom: 0, trailing: 8)
+            section.boundarySupplementaryItems = [headerSupplementaryItem]
+                
+            return section
         })
         return layout
     }
