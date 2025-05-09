@@ -72,17 +72,17 @@ class HomeViewController: BaseViewController {
     }
     
     override func addSubviews() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "gear"),
-            style: .plain,
-            target: self,
-            action: #selector(settingsButtonTapped)
-        )
-        
         [
             collectionView,
             loadingIndicator
         ].forEach { view.addSubview($0) }
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "gear"),
+            primaryAction: UIAction { [unowned self] _ in
+                navigationController?.pushViewController(SettingsViewController(), animated: true)
+            }
+        )
     }
     
     override func setLayout() {
@@ -142,10 +142,6 @@ class HomeViewController: BaseViewController {
                 artworkURL: Formatter.shared.getArtworkURL(images: $0.album.images)
             )
         }
-    }
-    
-    @objc func settingsButtonTapped() {
-        navigationController?.pushViewController(SettingsViewController(), animated: true)
     }
 
 
