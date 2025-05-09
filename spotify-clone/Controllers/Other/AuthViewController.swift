@@ -3,13 +3,18 @@ import WebKit
 
 class AuthViewController: UIViewController, WKNavigationDelegate {
     
-    private let webView: WKWebView = {
+    // didn't use Then to create configuration
+    lazy var webView: WKWebView = {
         var preferences = WKWebpagePreferences()
         preferences.allowsContentJavaScript = true
         var configuration = WKWebViewConfiguration()
         configuration.websiteDataStore = .nonPersistent()
         configuration.defaultWebpagePreferences = preferences
-        return WKWebView(frame: .zero, configuration: configuration)
+        
+        let webView =  WKWebView(frame: .zero, configuration: configuration)
+        webView.navigationDelegate = self
+        
+        return webView
     }()
     
     var completionHandler: ((Bool) -> Void)?
@@ -20,12 +25,22 @@ class AuthViewController: UIViewController, WKNavigationDelegate {
         title = "Sign in"
         view.backgroundColor = .systemBackground
         
-        webView.navigationDelegate = self
-        view.addSubview(webView)
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        webView.fill(to: view)
+        addSubviews()
+        setLayout()
         
         webView.load(URLRequest(url: AuthApi.shared.signInURL))
+    }
+    
+    func addSubviews() {
+        [
+            webView
+        ].forEach { view.addSubview($0) }
+    }
+    
+    func setLayout() {
+        webView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {

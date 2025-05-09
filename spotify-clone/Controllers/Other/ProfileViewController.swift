@@ -12,35 +12,53 @@ class ProfileViewController: UIViewController {
     private var profile: UserProfile!
     private var profileImage: UIImage?
     
-    private let tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: ImageHeaderView.reuseIdentifier)
-        tableView.sectionHeaderHeight = 100
-        tableView.allowsSelection = false
-        return tableView
-    }()
+    lazy var tableView = UITableView().then {
+        $0.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        $0.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: ImageHeaderView.reuseIdentifier)
+        
+        $0.sectionHeaderHeight = 100
+        $0.allowsSelection = false
+        
+        $0.dataSource = self
+        $0.delegate = self
+        
+        $0.isHidden = true
+    }
     
-    private let errorLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Failed to load profile..."
-        return label
-    }()
-
+    lazy var errorLabel = UILabel().then {
+        $0.text = "Failed to load profile..."
+        $0.isHidden = true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = "Profile"
         
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.fill(to: view)
-        tableView.isHidden = true
-
+        addSubviews()
+        setLayout()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         Task {
             await fetchProfile()
+        }
+    }
+    
+    func addSubviews() {
+        [
+            tableView,
+            errorLabel
+        ].forEach { view.addSubview($0) }
+    }
+    
+    func setLayout() {
+        tableView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        errorLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
     
@@ -68,17 +86,8 @@ class ProfileViewController: UIViewController {
                 )
             }
         } catch {
-            showError()
+            errorLabel.isHidden = false
         }
-    }
-    
-    func showError() {
-        view.addSubview(errorLabel)
-        errorLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-        ])
     }
     
 

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		EE9FA0DF2DBE08E6000DF4D1 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = EE9FA0DE2DBE08E6000DF4D1 /* SDWebImage */; };
+		EE9FA1762DCAD219000DF4D1 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = EE9FA1752DCAD219000DF4D1 /* Then */; };
+		EE9FA17E2DCAE3D7000DF4D1 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EE9FA17D2DCAE3D7000DF4D1 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE9FA17E2DCAE3D7000DF4D1 /* SnapKit in Frameworks */,
 				EE9FA0DF2DBE08E6000DF4D1 /* SDWebImage in Frameworks */,
+				EE9FA1762DCAD219000DF4D1 /* Then in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +88,8 @@
 			name = "spotify-clone";
 			packageProductDependencies = (
 				EE9FA0DE2DBE08E6000DF4D1 /* SDWebImage */,
+				EE9FA1752DCAD219000DF4D1 /* Then */,
+				EE9FA17D2DCAE3D7000DF4D1 /* SnapKit */,
 			);
 			productName = "spotify-clone";
 			productReference = EE32FD3E2DA73524003E6D9F /* spotify-clone.app */;
@@ -115,6 +121,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				EE9FA0DD2DBE08E6000DF4D1 /* XCRemoteSwiftPackageReference "SDWebImage" */,
+				EE9FA1742DCAD218000DF4D1 /* XCRemoteSwiftPackageReference "Then" */,
+				EE9FA17C2DCAE3D7000DF4D1 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EE32FD3F2DA73524003E6D9F /* Products */;
@@ -354,6 +362,22 @@
 				minimumVersion = 5.21.0;
 			};
 		};
+		EE9FA1742DCAD218000DF4D1 /* XCRemoteSwiftPackageReference "Then" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devxoul/Then";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+		EE9FA17C2DCAE3D7000DF4D1 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -361,6 +385,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EE9FA0DD2DBE08E6000DF4D1 /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImage;
+		};
+		EE9FA1752DCAD219000DF4D1 /* Then */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE9FA1742DCAD218000DF4D1 /* XCRemoteSwiftPackageReference "Then" */;
+			productName = Then;
+		};
+		EE9FA17D2DCAE3D7000DF4D1 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE9FA17C2DCAE3D7000DF4D1 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

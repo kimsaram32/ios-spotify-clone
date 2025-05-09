@@ -1,23 +1,21 @@
 import UIKit
+import SnapKit
+import Then
 
 class SearchViewController: UIViewController {
     
-    lazy var searchController: UISearchController = {
-        let searchResultsController = SearchResultViewController()
-        searchResultsController.delegate = self
-        let searchController = UISearchController(searchResultsController: searchResultsController)
-        searchController.searchBar.placeholder = "Songs, Artists, Albums"
-        searchController.searchResultsUpdater = self
-        return searchController
-    }()
+    lazy var searchController = UISearchController(searchResultsController: SearchResultViewController()).then {
+        let resultsController = $0.searchResultsController as! SearchResultViewController
+        resultsController.delegate = self
+        $0.searchBar.placeholder = "Songs, Artists, Albums"
+        $0.searchResultsUpdater = self
+    }
     
-    lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
-        collectionView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.reuseIdentifier)
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        return collectionView
-    }()
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout()).then {
+        $0.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.reuseIdentifier)
+        $0.dataSource = self
+        $0.delegate = self
+    }
     
     var categoryViewModels = [CategoryCellViewModel]()
     
@@ -63,11 +61,10 @@ class SearchViewController: UIViewController {
     }
     
     func setLayout() {
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 4).isActive = true
-        collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -4).isActive = true
+        collectionView.snp.makeConstraints {
+            $0.verticalEdges.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview().inset(4)
+        }
     }
     
 

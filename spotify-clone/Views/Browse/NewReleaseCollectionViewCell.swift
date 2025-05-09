@@ -5,30 +5,22 @@ class NewReleaseCollectionViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "NewReleaseCollectionViewCell"
     
-    lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.layer.cornerRadius = 12
-        imageView.clipsToBounds = true
-        return imageView
-    }()
+    lazy var imageView = UIImageView().then {
+        $0.layer.cornerRadius = 12
+        $0.clipsToBounds = true
+    }
     
-    lazy var nameLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 20, weight: .bold)
-        return label
-    }()
+    lazy var nameLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 20, weight: .bold)
+    }
     
-    lazy var artistNameLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .secondaryLabel
-        return label
-    }()
+    lazy var artistNameLabel = UILabel().then {
+        $0.textColor = .secondaryLabel
+    }
     
-    lazy var tracksCountLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .secondaryLabel
-        return label
-    }()
+    lazy var tracksCountLabel = UILabel().then {
+        $0.textColor = .secondaryLabel
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -54,25 +46,27 @@ class NewReleaseCollectionViewCell: UICollectionViewCell {
     func setLayout() {
         let padding: CGFloat = 10
         
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.heightAnchor.constraint(equalTo: heightAnchor, constant: -padding * 2).isActive = true
-        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        imageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding).isActive = true
+        imageView.snp.makeConstraints {
+            $0.size.equalTo(snp.height).inset(padding)
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().inset(padding)
+        }
         
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: padding).isActive = true
-        nameLabel.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: padding).isActive = true
-        nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding).isActive = true
+        nameLabel.snp.makeConstraints {
+            $0.top.trailing.equalToSuperview().inset(padding)
+            $0.leading.equalTo(imageView.snp.trailing).offset(padding)
+        }
 
-        artistNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        artistNameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: padding).isActive = true
-        artistNameLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor).isActive = true
-        artistNameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding).isActive = true
-
-        tracksCountLabel.translatesAutoresizingMaskIntoConstraints = false
-        tracksCountLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -padding).isActive = true
-        tracksCountLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor).isActive = true
+        artistNameLabel.snp.makeConstraints {
+            $0.top.equalTo(nameLabel.snp.bottom).offset(padding)
+            $0.leading.equalTo(nameLabel)
+            $0.trailing.equalToSuperview().inset(padding)
+        }
+        
+        tracksCountLabel.snp.makeConstraints {
+            $0.leading.equalTo(nameLabel)
+            $0.bottom.equalToSuperview().inset(padding)
+        }
     }
     
     func configure(with viewModel: NewReleaseCellViewModel) {

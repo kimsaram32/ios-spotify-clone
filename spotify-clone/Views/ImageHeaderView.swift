@@ -1,26 +1,35 @@
 import UIKit
+import SnapKit
+import Then
 
 class ImageHeaderView: UITableViewHeaderFooterView {
     
     static let reuseIdentifier = "ImageHeaderView"
     
-    private let imageView = UIImageView()
+    lazy var imageView = UIImageView()
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         
-        contentView.addSubview(imageView)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: 60),
-            imageView.heightAnchor.constraint(equalToConstant: 60),
-            imageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-        ])
+        addSubviews()
+        setLayout()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+    }
+    
+    func addSubviews() {
+        [
+            imageView
+        ].forEach { contentView.addSubview($0) }
+    }
+    
+    func setLayout() {
+        imageView.snp.makeConstraints {
+            $0.size.equalTo(60)
+            $0.center.equalToSuperview()
+        }
     }
     
     func configure(image: UIImage) {

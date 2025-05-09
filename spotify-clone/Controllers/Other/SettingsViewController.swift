@@ -12,13 +12,13 @@ class SettingsViewController: UIViewController {
         let handler: () -> Void
     }
     
-    private var tableViewSections: [TableViewSection]!
+    var tableViewSections: [TableViewSection]!
     
-    private let tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        return tableView
-    }()
+    lazy var tableView = UITableView().then {
+        $0.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        $0.delegate = self
+        $0.dataSource = self
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,11 +41,20 @@ class SettingsViewController: UIViewController {
             ])
         ]
         
-        tableView.delegate = self
-        tableView.dataSource = self
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.fill(to: view.safeAreaLayoutGuide)
+        addSubviews()
+        setLayout()
+    }
+    
+    func addSubviews() {
+        [
+            tableView
+        ].forEach { view.addSubview($0) }
+    }
+    
+    func setLayout() {
+        tableView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
     }
     
 

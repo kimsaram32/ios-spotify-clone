@@ -4,11 +4,9 @@ class TitleHeaderSupplementaryView: UICollectionReusableView {
     
     static let reuseIdentifier = "TitleHeaderSupplementaryView"
     
-    lazy var label: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .bold)
-        return label
-    }()
+    lazy var label = UILabel().then {
+        $0.font = .systemFont(ofSize: 18, weight: .bold)
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,8 +25,9 @@ class TitleHeaderSupplementaryView: UICollectionReusableView {
     }
     
     func setLayout() {
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.fill(to: self)
+        label.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     
     func configure(with title: String) {

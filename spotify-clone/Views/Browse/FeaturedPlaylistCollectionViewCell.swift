@@ -5,27 +5,21 @@ class FeaturedPlaylistCollectionViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "FeaturedPlaylistCollectionViewCell"
     
-    lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.layer.cornerRadius = 12
-        imageView.clipsToBounds = true
-        return imageView
-    }()
+    lazy var imageView = UIImageView().then {
+        $0.layer.cornerRadius = 12
+        $0.clipsToBounds = true
+    }
     
-    lazy var nameLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 20, weight: .bold)
-        label.textAlignment = .center
-        label.numberOfLines = 2
-        return label
-    }()
+    lazy var nameLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 20, weight: .bold)
+        $0.textAlignment = .center
+        $0.numberOfLines = 2
+    }
     
-    lazy var tracksCountLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .secondaryLabel
-        label.textAlignment = .center
-        return label
-    }()
+    lazy var tracksCountLabel = UILabel().then {
+        $0.textColor = .secondaryLabel
+        $0.textAlignment = .center
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -46,21 +40,22 @@ class FeaturedPlaylistCollectionViewCell: UICollectionViewCell {
     }
     
     func setLayout() {
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8).isActive = true
-        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
-        imageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        imageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        imageView.snp.makeConstraints {
+            $0.size.equalTo(snp.width).multipliedBy(0.8)
+            $0.centerX.top.equalToSuperview()
+        }
         
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
-        nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8).isActive = true
-        nameLabel.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        nameLabel.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.top.equalTo(imageView.snp.bottom).offset(8)
+            $0.centerX.equalToSuperview()
+        }
         
-        tracksCountLabel.translatesAutoresizingMaskIntoConstraints = false
-        tracksCountLabel.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
-        tracksCountLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8).isActive = true
-        tracksCountLabel.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        tracksCountLabel.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.top.equalTo(nameLabel.snp.bottom).offset(8)
+            $0.centerX.equalToSuperview()
+        }
     }
     
     func configure(with viewModel: FeaturedPlaylistCellViewModel) {

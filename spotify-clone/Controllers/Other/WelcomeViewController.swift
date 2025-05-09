@@ -2,7 +2,7 @@ import UIKit
 
 class WelcomeViewController: UIViewController {
     
-    private let signInButton: UIButton = {
+    lazy var signInButton = UIButton().then {
         var buttonConfiguration = UIButton.Configuration.filled()
         
         buttonConfiguration.baseBackgroundColor = .white
@@ -12,22 +12,32 @@ class WelcomeViewController: UIViewController {
         buttonConfiguration.contentInsets.top = 12
         
         buttonConfiguration.title = "Sign in with Spotify"
-        
-        let button = UIButton(configuration: buttonConfiguration)
-        return button
-    }()
+        $0.configuration = buttonConfiguration
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Spotify"
         view.backgroundColor = .systemGreen
         
-        view.addSubview(signInButton)
-        signInButton.translatesAutoresizingMaskIntoConstraints = false
-        signInButton.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -60).isActive = true
-        signInButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        signInButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20).isActive = true
+        addSubviews()
+        setLayout()
+        
         signInButton.addTarget(self, action: #selector(signInButtonTapped), for: .touchUpInside)
+    }
+    
+    func addSubviews() {
+        [
+            signInButton
+        ].forEach { view.addSubview($0) }
+    }
+    
+    func setLayout() {
+        signInButton.snp.makeConstraints {
+            $0.width.equalToSuperview().offset(-60)
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
+        }
     }
     
     @objc func signInButtonTapped() {

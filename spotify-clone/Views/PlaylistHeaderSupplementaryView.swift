@@ -4,31 +4,23 @@ class PlaylistHeaderSupplementaryView: UICollectionReusableView {
     
     static let reuseIdentifier = "PlaylistHeaderSupplementaryView"
     
-    lazy var artworkImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.layer.cornerRadius = 12
-        imageView.clipsToBounds = true
-        return imageView
-    }()
+    lazy var artworkImageView = UIImageView().then {
+        $0.layer.cornerRadius = 12
+        $0.clipsToBounds = true
+    }
     
-    lazy var nameLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 24, weight: .bold)
-        return label
-    }()
+    lazy var nameLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 24, weight: .bold)
+    }
     
-    lazy var descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .secondaryLabel
-        return label
-    }()
+    lazy var descriptionLabel = UILabel().then {
+        $0.textColor = .secondaryLabel
+    }
     
-    lazy var ownerLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 18)
-        label.textColor = .secondaryLabel
-        return label
-    }()
+    lazy var ownerLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 18)
+        $0.textColor = .secondaryLabel
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,26 +42,25 @@ class PlaylistHeaderSupplementaryView: UICollectionReusableView {
     }
     
     func setLayout() {
-        artworkImageView.translatesAutoresizingMaskIntoConstraints = false
-        artworkImageView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.6).isActive = true
-        artworkImageView.heightAnchor.constraint(equalTo: artworkImageView.widthAnchor).isActive = true
-        artworkImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        artworkImageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        artworkImageView.snp.makeConstraints {
+            $0.size.equalTo(snp.width).multipliedBy(0.6)
+            $0.centerX.top.equalToSuperview()
+        }
         
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.topAnchor.constraint(equalTo: artworkImageView.bottomAnchor, constant: 20).isActive = true
-        nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6).isActive = true
-        nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6).isActive = true
+        nameLabel.snp.makeConstraints {
+            $0.top.equalTo(artworkImageView.snp.bottom).offset(20)
+            $0.horizontalEdges.equalToSuperview().inset(6)
+        }
 
-        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        descriptionLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 16).isActive = true
-        descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6).isActive = true
-        descriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6).isActive = true
-
-        ownerLabel.translatesAutoresizingMaskIntoConstraints = false
-        ownerLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 16).isActive = true
-        ownerLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6).isActive = true
-        ownerLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6).isActive = true
+        descriptionLabel.snp.makeConstraints {
+            $0.top.equalTo(nameLabel.snp.bottom).offset(16)
+            $0.horizontalEdges.equalToSuperview().inset(6)
+        }
+        
+        ownerLabel.snp.makeConstraints {
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(16)
+            $0.horizontalEdges.equalToSuperview().inset(6)
+        }
     }
     
     func configure(with viewModel: PlaylistHeaderViewModel) {

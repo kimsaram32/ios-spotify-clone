@@ -1,4 +1,6 @@
 import UIKit
+import SnapKit
+import Then
 
 class HomeViewController: UIViewController {
     
@@ -28,39 +30,34 @@ class HomeViewController: UIViewController {
     var featuredPlaylistViewModels = [FeaturedPlaylistCellViewModel]()
     var recommendationViewModels = [TrackCellViewModel]()
     
-    lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
-        collectionView.dataSource = self
-        collectionView.delegate = self
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout()).then {
+        $0.dataSource = self
+        $0.delegate = self
         
-        collectionView.register(
+        $0.register(
             TitleHeaderSupplementaryView.self,
             forSupplementaryViewOfKind: "header",
             withReuseIdentifier: TitleHeaderSupplementaryView.reuseIdentifier
         )
-        collectionView.register(
+        $0.register(
             NewReleaseCollectionViewCell.self,
             forCellWithReuseIdentifier: NewReleaseCollectionViewCell.reuseIdentifier
         )
-        collectionView.register(
+        $0.register(
             FeaturedPlaylistCollectionViewCell.self,
             forCellWithReuseIdentifier: FeaturedPlaylistCollectionViewCell.reuseIdentifier
         )
-        collectionView.register(
+        $0.register(
             TrackCollectionViewCell.self,
             forCellWithReuseIdentifier: TrackCollectionViewCell.reuseIdentifier
         )
         
-        collectionView.isHidden = true
-        
-        return collectionView
-    }()
+        $0.isHidden = true
+    }
     
-    lazy var loadingIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .large)
-        indicator.startAnimating()
-        return indicator
-    }()
+    lazy var loadingIndicator = UIActivityIndicatorView(style: .large).then {
+        $0.startAnimating()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,7 +66,9 @@ class HomeViewController: UIViewController {
         
         addSubviews()
         setLayout()
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         Task {
             await fetchData()
         }
@@ -90,12 +89,13 @@ class HomeViewController: UIViewController {
     }
     
     func setLayout() {
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.fill(to: view.safeAreaLayoutGuide)
+        collectionView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
         
-        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
-        loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
     }
     
     func fetchData() async {

@@ -17,30 +17,24 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         .systemTeal
     ]
 
-    lazy var nameLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 20, weight: .bold)
-        label.textColor = .white
-        label.numberOfLines = 0
-        return label
-    }()
+    lazy var nameLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 20, weight: .bold)
+        $0.textColor = .white
+        $0.numberOfLines = 0
+    }
     
-    lazy var iconImageWrapperView: UIView = {
-        let view = UIView()
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = .init(width: -4, height: 4)
-        view.layer.shadowRadius = 4
-        view.transform = CGAffineTransform(rotationAngle: (20.0 / 180.0) * .pi)
-        view.addSubview(iconImageView)
-        return view
-    }()
+    lazy var iconImageWrapperView = UIView().then {
+        $0.layer.shadowOpacity = 0.2
+        $0.layer.shadowOffset = .init(width: -4, height: 4)
+        $0.layer.shadowRadius = 4
+        $0.transform = CGAffineTransform(rotationAngle: (20.0 / 180.0) * .pi)
+        $0.addSubview(iconImageView)
+    }
     
-    lazy var iconImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.layer.cornerRadius = 8
-        imageView.clipsToBounds = true
-        return imageView
-    }()
+    lazy var iconImageView = UIImageView().then {
+        $0.layer.cornerRadius = 8
+        $0.clipsToBounds = true
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -64,19 +58,21 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     }
     
     func setLayout() {
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
-        nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16).isActive = true
-        nameLabel.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.7).isActive = true
+        nameLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(10)
+            $0.top.equalToSuperview().offset(16)
+            $0.width.equalToSuperview().multipliedBy(0.7)
+        }
         
-        iconImageWrapperView.translatesAutoresizingMaskIntoConstraints = false
-        iconImageWrapperView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 12).isActive = true
-        iconImageWrapperView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -6).isActive = true
-        iconImageWrapperView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.4).isActive = true
-        iconImageWrapperView.heightAnchor.constraint(equalTo: iconImageWrapperView.widthAnchor).isActive = true
+        iconImageWrapperView.snp.makeConstraints {
+            $0.size.equalTo(snp.width).multipliedBy(0.4)
+            $0.trailing.equalToSuperview().offset(12)
+            $0.bottom.equalToSuperview().inset(6)
+        }
         
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        iconImageView.fill(to: iconImageWrapperView)
+        iconImageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     
     func configure(with viewModel: CategoryCellViewModel) {

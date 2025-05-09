@@ -11,14 +11,15 @@ class PlaylistViewController: UIViewController {
     
     var trackViewModels: [TrackCellViewModel]?
     
-    lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
-        collectionView.dataSource = self
-        collectionView.register(TrackCollectionViewCell.self, forCellWithReuseIdentifier: TrackCollectionViewCell.reuseIdentifier)
-        collectionView.register(PlaylistHeaderSupplementaryView.self, forSupplementaryViewOfKind: ElementKind.header, withReuseIdentifier: PlaylistHeaderSupplementaryView.reuseIdentifier)
-        collectionView.register(LoadingIndicatorCollectionViewCell.self, forCellWithReuseIdentifier: LoadingIndicatorCollectionViewCell.reuseIdentifier)
-        return collectionView
-    }()
+    lazy var collectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: createCollectionViewLayout()
+    ).then {
+        $0.dataSource = self
+        $0.register(TrackCollectionViewCell.self, forCellWithReuseIdentifier: TrackCollectionViewCell.reuseIdentifier)
+        $0.register(PlaylistHeaderSupplementaryView.self, forSupplementaryViewOfKind: ElementKind.header, withReuseIdentifier: PlaylistHeaderSupplementaryView.reuseIdentifier)
+        $0.register(LoadingIndicatorCollectionViewCell.self, forCellWithReuseIdentifier: LoadingIndicatorCollectionViewCell.reuseIdentifier)
+    }
     
     init(playlist: Playlist) {
         self.playlist = playlist
@@ -55,8 +56,9 @@ class PlaylistViewController: UIViewController {
     }
     
     func setLayout() {
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.fill(to: view.safeAreaLayoutGuide)
+        collectionView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
     }
     
     func fetchTracks() async {
