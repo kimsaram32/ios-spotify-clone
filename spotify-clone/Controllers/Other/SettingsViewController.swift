@@ -1,6 +1,6 @@
 import UIKit
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: BaseViewController {
     
     struct TableViewSection {
         let title: String
@@ -40,18 +40,15 @@ class SettingsViewController: UIViewController {
                 }
             ])
         ]
-        
-        addSubviews()
-        setLayout()
     }
     
-    func addSubviews() {
+    override func addSubviews() {
         [
             tableView
         ].forEach { view.addSubview($0) }
     }
     
-    func setLayout() {
+    override func setLayout() {
         tableView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }

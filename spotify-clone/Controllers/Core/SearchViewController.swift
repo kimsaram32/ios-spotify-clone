@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-class SearchViewController: UIViewController {
+class SearchViewController: BaseViewController {
     
     lazy var searchController = UISearchController(searchResultsController: SearchResultViewController()).then {
         let resultsController = $0.searchResultsController as! SearchResultViewController
@@ -34,9 +34,6 @@ class SearchViewController: UIViewController {
         view.backgroundColor = .systemBackground
         
         navigationItem.searchController = searchController
-        
-        addSubviews()
-        setLayout()
     }
     
     func fetchCategories() async {
@@ -54,13 +51,13 @@ class SearchViewController: UIViewController {
         }
     }
     
-    func addSubviews() {
+    override func addSubviews() {
         [
             collectionView
         ].forEach { view.addSubview($0) }
     }
     
-    func setLayout() {
+    override func setLayout() {
         collectionView.snp.makeConstraints {
             $0.verticalEdges.equalTo(view.safeAreaLayoutGuide)
             $0.horizontalEdges.equalToSuperview().inset(4)

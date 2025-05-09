@@ -1,6 +1,6 @@
 import UIKit
 
-class PlaylistViewController: UIViewController {
+class PlaylistViewController: BaseViewController {
     
     struct ElementKind {
         static let header = "header"
@@ -43,19 +43,13 @@ class PlaylistViewController: UIViewController {
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        addSubviews()
-        setLayout()
-    }
-    
-    func addSubviews() {
+    override func addSubviews() {
         [
             collectionView
         ].forEach { view.addSubview($0) }
     }
     
-    func setLayout() {
+    override func setLayout() {
         collectionView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }

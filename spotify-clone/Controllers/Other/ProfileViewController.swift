@@ -1,7 +1,7 @@
 import UIKit
 import SDWebImage
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: BaseViewController {
     
     struct TableViewEntry {
         let name: String
@@ -34,9 +34,6 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
         
         title = "Profile"
-        
-        addSubviews()
-        setLayout()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,14 +42,14 @@ class ProfileViewController: UIViewController {
         }
     }
     
-    func addSubviews() {
+    override func addSubviews() {
         [
             tableView,
             errorLabel
         ].forEach { view.addSubview($0) }
     }
     
-    func setLayout() {
+    override func setLayout() {
         tableView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }

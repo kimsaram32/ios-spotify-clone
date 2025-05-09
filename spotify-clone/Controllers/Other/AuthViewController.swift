@@ -1,7 +1,7 @@
 import UIKit
 import WebKit
 
-class AuthViewController: UIViewController, WKNavigationDelegate {
+class AuthViewController: BaseViewController, WKNavigationDelegate {
     
     // didn't use Then to create configuration
     lazy var webView: WKWebView = {
@@ -25,19 +25,16 @@ class AuthViewController: UIViewController, WKNavigationDelegate {
         title = "Sign in"
         view.backgroundColor = .systemBackground
         
-        addSubviews()
-        setLayout()
-        
         webView.load(URLRequest(url: AuthApi.shared.signInURL))
     }
     
-    func addSubviews() {
+    override func addSubviews() {
         [
             webView
         ].forEach { view.addSubview($0) }
     }
     
-    func setLayout() {
+    override func setLayout() {
         webView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

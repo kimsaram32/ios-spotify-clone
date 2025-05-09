@@ -1,6 +1,6 @@
 import UIKit
 
-class WelcomeViewController: UIViewController {
+class WelcomeViewController: BaseViewController {
     
     lazy var signInButton = UIButton().then {
         var buttonConfiguration = UIButton.Configuration.filled()
@@ -20,19 +20,16 @@ class WelcomeViewController: UIViewController {
         title = "Spotify"
         view.backgroundColor = .systemGreen
         
-        addSubviews()
-        setLayout()
-        
         signInButton.addTarget(self, action: #selector(signInButtonTapped), for: .touchUpInside)
     }
     
-    func addSubviews() {
+    override func addSubviews() {
         [
             signInButton
         ].forEach { view.addSubview($0) }
     }
     
-    func setLayout() {
+    override func setLayout() {
         signInButton.snp.makeConstraints {
             $0.width.equalToSuperview().offset(-60)
             $0.centerX.equalToSuperview()

@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-class HomeViewController: UIViewController {
+class HomeViewController: BaseViewController {
     
     enum BrowseSectionType: Int {
         
@@ -63,9 +63,6 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         title = "Browse"
         view.backgroundColor = .systemBackground
-        
-        addSubviews()
-        setLayout()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,7 +71,7 @@ class HomeViewController: UIViewController {
         }
     }
     
-    func addSubviews() {
+    override func addSubviews() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "gear"),
             style: .plain,
@@ -88,7 +85,7 @@ class HomeViewController: UIViewController {
         ].forEach { view.addSubview($0) }
     }
     
-    func setLayout() {
+    override func setLayout() {
         collectionView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
