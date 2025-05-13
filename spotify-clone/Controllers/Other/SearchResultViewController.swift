@@ -93,7 +93,7 @@ extension SearchResultViewController {
                 SearchResultCellViewModel(
                     title: $0.name,
                     subtitle: Formatter.shared.formatArtistName(artists: $0.artists),
-                    artworkURL: Formatter.shared.getArtworkURL(images: $0.images),
+                    artworkImage: Formatter.shared.getArtworkImageSource(with: $0.images),
                 )
             )
         })
@@ -105,8 +105,8 @@ extension SearchResultViewController {
                 $0,
                 SearchResultCellViewModel(
                     title: $0.name,
-                    artworkURL: ($0.images != nil) ? Formatter.shared.getArtworkURL(
-                        images: $0.images!
+                    artworkImage: ($0.images != nil) ? Formatter.shared.getArtworkImageSource(
+                        with: $0.images!
                     ) : nil
                 )
             )
@@ -120,7 +120,7 @@ extension SearchResultViewController {
                 SearchResultCellViewModel(
                     title: $0.name,
                     subtitle: $0.description,
-                    artworkURL: Formatter.shared.getArtworkURL(images: $0.images)
+                    artworkImage: Formatter.shared.getArtworkImageSource(with: $0.images)
                 )
             )
         })
@@ -135,7 +135,7 @@ extension SearchResultViewController {
                     SearchResultCellViewModel(
                         title: $0.name,
                         subtitle: $0.album.name,
-                        artworkURL: Formatter.shared.getArtworkURL(images: $0.album.images)
+                        artworkImage: Formatter.shared.getArtworkImageSource(with: $0.album.images)
                     )
                 )
             }

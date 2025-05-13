@@ -4,7 +4,6 @@ import Foundation
 struct CategoryCellViewModel {
     
     let name: String
-    let iconImageURL: URL
-    
+    let iconImage: ImageSource
     
 }

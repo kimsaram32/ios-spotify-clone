@@ -77,7 +77,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     
     func configure(with viewModel: CategoryCellViewModel) {
         nameLabel.text = viewModel.name
-        iconImageView.sd_setImage(with: viewModel.iconImageURL)
+        iconImageView.setImage(with: viewModel.iconImage)
     }
     
     

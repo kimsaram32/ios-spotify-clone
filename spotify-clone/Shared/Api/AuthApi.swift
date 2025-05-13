@@ -14,6 +14,8 @@ final class AuthApi {
             "user-read-email",
             "user-top-read",
             "playlist-read-private",
+            "playlist-modify-public",
+            "playlist-modify-private",
         ].joined(separator: " ")
     }
     

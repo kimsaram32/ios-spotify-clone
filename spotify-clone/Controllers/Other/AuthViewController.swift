@@ -23,7 +23,6 @@ class AuthViewController: BaseViewController, WKNavigationDelegate {
         super.viewDidLoad()
 
         title = "Sign in"
-        view.backgroundColor = .systemBackground
         
         webView.load(URLRequest(url: AuthApi.shared.signInURL))
     }

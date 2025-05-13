@@ -24,7 +24,6 @@ class SettingsViewController: BaseViewController {
         super.viewDidLoad()
         
         title = "Settings"
-        view.backgroundColor = .systemBackground
         
         tableViewSections = [
             TableViewSection(title: "Profile", rows: [

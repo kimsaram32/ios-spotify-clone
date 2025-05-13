@@ -3,7 +3,7 @@ import Foundation
 struct PlaylistOwner: Codable {
    
     let id: String
-    let displayName: String
+    let displayName: String?
     
     enum CodingKeys: String, CodingKey {
         

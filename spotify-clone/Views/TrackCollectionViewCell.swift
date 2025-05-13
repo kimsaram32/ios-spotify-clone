@@ -4,6 +4,8 @@ import SDWebImage
 class TrackCollectionViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "TrackCollectionViewCell"
+    static let height: CGFloat = 100
+    static let spacing: CGFloat = 12
     
     lazy var imageView = UIImageView().then {
         $0.layer.cornerRadius = 8
@@ -61,9 +63,9 @@ class TrackCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with viewModel: TrackCellViewModel) {
-        imageView.sd_setImage(with: viewModel.artworkURL)
         nameLabel.text = viewModel.name
         artistNameLabel.text = viewModel.artistName
+        imageView.setImage(with: viewModel.artworkImage)
     }
     
     

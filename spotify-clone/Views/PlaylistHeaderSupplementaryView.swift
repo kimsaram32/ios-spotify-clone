@@ -7,6 +7,7 @@ class PlaylistHeaderSupplementaryView: UICollectionReusableView {
     lazy var artworkImageView = UIImageView().then {
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
+        $0.contentMode = .scaleAspectFit
     }
     
     lazy var nameLabel = UILabel().then {
@@ -64,7 +65,7 @@ class PlaylistHeaderSupplementaryView: UICollectionReusableView {
     }
     
     func configure(with viewModel: PlaylistHeaderViewModel) {
-        artworkImageView.sd_setImage(with: viewModel.artworkURL)
+        artworkImageView.setImage(with: viewModel.artworkImage)
         nameLabel.text = viewModel.name
         descriptionLabel.text = viewModel.description
         ownerLabel.text = viewModel.ownerName

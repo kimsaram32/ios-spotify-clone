@@ -31,7 +31,6 @@ class SearchViewController: BaseViewController {
         super.viewDidLoad()
         
         title = "Search"
-        view.backgroundColor = .systemBackground
         
         navigationItem.searchController = searchController
     }
@@ -42,7 +41,7 @@ class SearchViewController: BaseViewController {
             categoryViewModels = categories.map {
                 CategoryCellViewModel(
                     name: $0.name,
-                    iconImageURL: Formatter.shared.getArtworkURL(images: $0.icons)
+                    iconImage: Formatter.shared.getArtworkImageSource(with: $0.icons)
                 )
             }
             collectionView.reloadData()

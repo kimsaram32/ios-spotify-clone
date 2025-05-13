@@ -3,6 +3,7 @@ import Foundation
 struct Track: Codable {
     
     let id: String
+    let uri: String
     let album: Album
     let artists: [Artist]
     let availableMarkets: [String]
@@ -19,6 +20,7 @@ struct Track: Codable {
     
     enum CodingKeys: String, CodingKey {
         case id
+        case uri
         case album
         case artists
         case availableMarkets = "available_markets"

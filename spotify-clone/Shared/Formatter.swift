@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 final class Formatter {
     
@@ -12,8 +12,11 @@ final class Formatter {
         artists.count > 0 ? artists.map { $0.name }.joined(separator: ",") : "-"
     }
     
-    func getArtworkURL(images: [APIImage]) -> URL {
-        images.first?.url ?? defaultArtworkURL
+    func getArtworkImageSource(with images: [APIImage]?) -> ImageSource {
+        if let url = images?.first?.url {
+            return url
+        }
+        return UIImage(systemName: "photo")!
     }
 
 }

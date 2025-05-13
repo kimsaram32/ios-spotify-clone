@@ -2,6 +2,6 @@ import Foundation
 
 struct PlaylistDetailsResponse: Codable {
     
-    let tracks: ItemsResponse<PlaylistDetailsTrack>
+    let tracks: ItemsResponse<PlaylistDetailsTrack>?
     
 }

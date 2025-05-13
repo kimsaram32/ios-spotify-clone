@@ -25,9 +25,9 @@ class PlaylistViewController: BaseViewController {
         self.playlist = playlist
         headerViewModel = PlaylistHeaderViewModel(
             name: playlist.name,
-            description: playlist.description,
-            ownerName: playlist.owner.displayName,
-            artworkURL: Formatter.shared.getArtworkURL(images: playlist.images)
+            description: playlist.description ?? "",
+            ownerName: playlist.owner.displayName ?? "",
+            artworkImage: Formatter.shared.getArtworkImageSource(with: playlist.images)
         )
         
         super.init(nibName: nil, bundle: nil)
@@ -47,6 +47,7 @@ class PlaylistViewController: BaseViewController {
         [
             collectionView
         ].forEach { view.addSubview($0) }
+        navigationItem.rightBarButtonItem = UIBarButtonItem(primaryAction: action(deletePlaylistOf: playlist))
     }
     
     override func setLayout() {
@@ -62,7 +63,7 @@ class PlaylistViewController: BaseViewController {
                 TrackCellViewModel(
                     name: $0.name,
                     artistName: Formatter.shared.formatArtistName(artists: $0.artists),
-                    artworkURL: Formatter.shared.getArtworkURL(images: $0.album.images)
+                    artworkImage: Formatter.shared.getArtworkImageSource(with: $0.album.images)
                 )
             }
             collectionView.reloadData()
@@ -72,6 +73,22 @@ class PlaylistViewController: BaseViewController {
     }
     
 
+}
+
+extension PlaylistViewController: CanDeletePlaylist {
+    
+    func deletePlaylist(_ playlist: Playlist) {
+        Task {
+            do {
+                try await PlaylistApi.shared.deletePlaylist(playlist)
+                navigationController?.popViewController(animated: true)
+            } catch {
+                // todo: failed
+            }
+        }
+    }
+    
+    
 }
 
 extension PlaylistViewController: UICollectionViewDataSource {
@@ -119,12 +136,12 @@ extension PlaylistViewController {
             layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         )
         let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(100)),
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(TrackCollectionViewCell.height)),
             subitems: [item],
         )
         
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 8
+        section.interGroupSpacing = TrackCollectionViewCell.spacing
         section.boundarySupplementaryItems = [headerSupplementaryItem]
         return UICollectionViewCompositionalLayout(section: section)
     }

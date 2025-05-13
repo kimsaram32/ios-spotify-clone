@@ -1,13 +1,15 @@
 import UIKit
 import SDWebImage
 
-class NewReleaseCollectionViewCell: UICollectionViewCell {
+class HorizontalGroupCollectionViewCell: UICollectionViewCell {
     
-    static let reuseIdentifier = "NewReleaseCollectionViewCell"
+    static let reuseIdentifier = "HorizontalTrackGroupCollectionViewCell"
     
     lazy var imageView = UIImageView().then {
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
+        $0.contentMode = .scaleAspectFit
+        $0.contentScaleFactor = 0.8
     }
     
     lazy var nameLabel = UILabel().then {
@@ -69,11 +71,11 @@ class NewReleaseCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configure(with viewModel: NewReleaseCellViewModel) {
-        imageView.sd_setImage(with: viewModel.artworkURL)
-        nameLabel.text = viewModel.name
-        artistNameLabel.text = viewModel.artistName
-        tracksCountLabel.text = "\(viewModel.tracksCount) \(viewModel.tracksCount == 1 ? "Track" : "Tracks")"
+    func configure(with viewModel: ItemGroupCellViewModel) {
+        imageView.setImage(with: viewModel.image)
+        nameLabel.text = viewModel.title
+        artistNameLabel.text = viewModel.subtitle
+        tracksCountLabel.text = viewModel.itemsCount?.text ?? ""
     }
     
     

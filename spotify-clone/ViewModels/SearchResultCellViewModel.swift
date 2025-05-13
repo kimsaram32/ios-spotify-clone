@@ -4,7 +4,7 @@ struct SearchResultCellViewModel {
     
     let title: String
     var subtitle: String? = nil
-    let artworkURL: URL?
+    let artworkImage: ImageSource?
     
     
 }

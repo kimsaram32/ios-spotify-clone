@@ -6,7 +6,9 @@ class ImageHeaderView: UITableViewHeaderFooterView {
     
     static let reuseIdentifier = "ImageHeaderView"
     
-    lazy var imageView = UIImageView()
+    lazy var imageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+    }
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)

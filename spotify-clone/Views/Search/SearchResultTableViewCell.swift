@@ -5,8 +5,6 @@ class SearchResultTableViewCell: UITableViewCell {
     
     static let reuseIdentifier = "SearchResultTableViewCell"
     
-    private var imageLoadOperation: SDWebImageOperation?
-    
     func configure(with viewModel: SearchResultCellViewModel) {
         var contentConfiguration = defaultContentConfiguration()
         let imageSize = CGSize(width: 50, height: 50)
@@ -25,14 +23,11 @@ class SearchResultTableViewCell: UITableViewCell {
         
         self.contentConfiguration = contentConfiguration
         
-        imageLoadOperation = SDWebImageManager.shared.loadImage(with: viewModel.artworkURL, progress: nil, completed: { (image, _, _, _, _, _) in
+        Task {
+            let image = await viewModel.artworkImage?.provideImage()
             contentConfiguration.image = image
             self.contentConfiguration = contentConfiguration
-        })
-    }
-    
-    override func prepareForReuse() {
-        imageLoadOperation?.cancel()
+        }
     }
     
     

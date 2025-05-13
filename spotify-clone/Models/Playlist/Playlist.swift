@@ -4,8 +4,8 @@ struct Playlist: Codable {
     
     let id: String
     let isCollaborative: Bool
-    let description: String
-    let images: [APIImage]
+    let description: String?
+    let images: [APIImage]?
     let name: String
     let isPublic: Bool
     let owner: PlaylistOwner

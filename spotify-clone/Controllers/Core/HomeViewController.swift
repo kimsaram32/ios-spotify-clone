@@ -4,6 +4,9 @@ import Then
 
 class HomeViewController: BaseViewController {
     
+    typealias NewReleaseCell = HorizontalGroupCollectionViewCell
+    typealias FeaturedPlaylistCell = SquareGroupCollectionViewCell
+    
     enum BrowseSectionType: Int {
         
         case newRelease
@@ -26,10 +29,16 @@ class HomeViewController: BaseViewController {
     // this sucks (todo refactor with something else??)
     var featuredPlaylists = [Playlist]()
     
-    var newReleaseViewModels = [NewReleaseCellViewModel]()
-    var featuredPlaylistViewModels = [FeaturedPlaylistCellViewModel]()
+    var newReleaseViewModels = [ItemGroupCellViewModel]()
+    var featuredPlaylistViewModels = [ItemGroupCellViewModel]()
+    
+    var recommendeationTracks = [Track]()
     var recommendationViewModels = [TrackCellViewModel]()
     
+    lazy var longPressGestureRecognizer = UILongPressGestureRecognizer().then {
+        $0.addTarget(self, action: #selector(handleLongPress))
+    }
+
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout()).then {
         $0.dataSource = self
         $0.delegate = self
@@ -40,12 +49,12 @@ class HomeViewController: BaseViewController {
             withReuseIdentifier: TitleHeaderSupplementaryView.reuseIdentifier
         )
         $0.register(
-            NewReleaseCollectionViewCell.self,
-            forCellWithReuseIdentifier: NewReleaseCollectionViewCell.reuseIdentifier
+            NewReleaseCell.self,
+            forCellWithReuseIdentifier: NewReleaseCell.reuseIdentifier
         )
         $0.register(
-            FeaturedPlaylistCollectionViewCell.self,
-            forCellWithReuseIdentifier: FeaturedPlaylistCollectionViewCell.reuseIdentifier
+            FeaturedPlaylistCell.self,
+            forCellWithReuseIdentifier: FeaturedPlaylistCell.reuseIdentifier
         )
         $0.register(
             TrackCollectionViewCell.self,
@@ -53,6 +62,7 @@ class HomeViewController: BaseViewController {
         )
         
         $0.isHidden = true
+        $0.addGestureRecognizer(longPressGestureRecognizer)
     }
     
     lazy var loadingIndicator = UIActivityIndicatorView(style: .large).then {
@@ -62,7 +72,6 @@ class HomeViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Browse"
-        view.backgroundColor = .systemBackground
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -108,11 +117,11 @@ class HomeViewController: BaseViewController {
             return
         }
         newReleaseViewModels = albums.map {
-            NewReleaseCellViewModel(
-                name: $0.name,
-                artistName: Formatter.shared.formatArtistName(artists: $0.artists),
-                artworkURL: Formatter.shared.getArtworkURL(images: $0.images),
-                tracksCount: $0.totalTracks
+            ItemGroupCellViewModel(
+                title: $0.name,
+                subtitle: Formatter.shared.formatArtistName(artists: $0.artists),
+                image: Formatter.shared.getArtworkImageSource(with: $0.images),
+                itemsCount: .tracks(of: $0.totalTracks)
             )
         }
     }
@@ -123,10 +132,11 @@ class HomeViewController: BaseViewController {
         }
         featuredPlaylists = playlists
         featuredPlaylistViewModels = playlists.map {
-            FeaturedPlaylistCellViewModel(
-                name: $0.name,
-                tracksCount: $0.tracks.count,
-                artworkURL: Formatter.shared.getArtworkURL(images: $0.images)
+            ItemGroupCellViewModel(
+                title: $0.name,
+                subtitle: $0.owner.displayName ?? "",
+                image: Formatter.shared.getArtworkImageSource(with: $0.images),
+                itemsCount: .tracks(of: $0.tracks.count)
             )
         }
     }
@@ -135,13 +145,71 @@ class HomeViewController: BaseViewController {
         guard let tracks = try? await TrackApi.shared.getRecommendations() else {
             return
         }
+        recommendeationTracks = tracks
         recommendationViewModels = tracks.map {
             TrackCellViewModel(
                 name: $0.name,
                 artistName: Formatter.shared.formatArtistName(artists: $0.artists),
-                artworkURL: Formatter.shared.getArtworkURL(images: $0.album.images)
+                artworkImage: Formatter.shared.getArtworkImageSource(with: $0.album.images)
             )
         }
+    }
+    
+    @objc func handleLongPress() {
+        guard longPressGestureRecognizer.state == .began else {
+            return
+        }
+        let location = longPressGestureRecognizer.location(in: collectionView)
+        let indexPath = collectionView.indexPathForItem(at: location)
+        guard let indexPath, BrowseSectionType(
+            rawValue: indexPath.section
+        ) == BrowseSectionType.recommendation else {
+            return
+        }
+        let track = recommendeationTracks[indexPath.row]
+        
+        let playlistsViewController = LibraryPlaylistsViewController()
+        
+        playlistsViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(
+            systemItem: .close,
+            primaryAction: UIAction { [unowned self] _ in
+            dismiss(animated: true)
+        })
+        playlistsViewController.title = "Select a playlist to add"
+        
+        let sheetNavigationController = UINavigationController(rootViewController: playlistsViewController)
+        
+        playlistsViewController.selectHandler = { playlist in
+            let navigationController = self.navigationController!
+            
+            let loadingViewController = LoadingViewController()
+            sheetNavigationController.pushViewController(loadingViewController, animated: true)
+            sheetNavigationController.isNavigationBarHidden = true
+            
+            Task {
+                do {
+                    try await PlaylistApi.shared.addItemsToPlaylist(playlist, tracks: [track])
+                    
+                    navigationController.pushViewController(
+                        PlaylistViewController(playlist: playlist),
+                        animated: true
+                    )
+                    sheetNavigationController.dismiss(animated: true)
+                } catch {
+                    let alertController = UIAlertController(title: "Failed to add track", message: nil, preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "Close", style: .default) { _ in
+                        alertController.dismiss(animated: true)
+                    })
+                    sheetNavigationController.dismiss(animated: true)
+                    self.present(alertController, animated: true)
+                }
+            }
+        }
+        
+        if let sheet = sheetNavigationController.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+        }
+        present(sheetNavigationController, animated: true)
     }
 
 
@@ -171,15 +239,15 @@ extension HomeViewController: UICollectionViewDataSource {
         switch sectionType {
         case .newRelease:
             let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: NewReleaseCollectionViewCell.reuseIdentifier, for: indexPath
-            ) as! NewReleaseCollectionViewCell
+                withReuseIdentifier: NewReleaseCell.reuseIdentifier, for: indexPath
+            ) as! NewReleaseCell
             
             cell.configure(with: newReleaseViewModels[indexPath.row])
             return cell
         case .featuredPlaylist:
             let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: FeaturedPlaylistCollectionViewCell.reuseIdentifier, for: indexPath
-            ) as! FeaturedPlaylistCollectionViewCell
+                withReuseIdentifier: FeaturedPlaylistCell.reuseIdentifier, for: indexPath
+            ) as! FeaturedPlaylistCell
             cell.configure(with: featuredPlaylistViewModels[indexPath.row])
             return cell
         case .recommendation:
@@ -252,12 +320,12 @@ extension HomeViewController {
                 let item = NSCollectionLayoutItem(
                     layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 )
-                item.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
                 let verticalGroup = NSCollectionLayoutGroup.vertical(
-                    layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(100)),
+                    layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(TrackCollectionViewCell.height)),
                     subitems: [item]
                 )
                 section = NSCollectionLayoutSection(group: verticalGroup)
+                section.interGroupSpacing = TrackCollectionViewCell.spacing
             }
                 
             section.contentInsets = sectionContentInsets
